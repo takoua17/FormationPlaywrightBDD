@@ -1,0 +1,6 @@
+.env
+nodes_modules/
+allure-results/
+allure-report/
+rapports/
+dist/ #dossier de compilation  de ts

@@ -1,0 +1,19 @@
+environnement:
+ urlTest: 'https://www.automationexercise.com'
+ urlPreprod: 'https://www.automationexercise.com/'
+
+user:
+ admin:
+  login: 'bejaouitakoua2@gmail.com'
+  password: 'Takoua123'
+
+ superAdmin:
+  login: 'bejaouitakoua2@gmail.com'
+  password: 'Takoua123'
+
+payment:
+ cardName: 'BEJAOUI'
+ cardNumber: '123450980'
+ cvc: '260'
+ MoisCard: '02'
+ AnneeCard: '2090'
