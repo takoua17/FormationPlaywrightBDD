@@ -8,7 +8,7 @@ module.exports = {
       "src/steps/**/*.ts",
       "src/support/pageFixture.ts"
     ],
-    tags:'@suppression',
+    tags:'@connexionValide',
     requireModule: ["ts-node/register"],
     format: [
       "progress-bar",
