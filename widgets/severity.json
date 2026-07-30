@@ -1,1 +1,1 @@
-[{"uid":"f14984e5f1326a8d","name":"suppression d un seul produit parmi plusieurs","time":{"start":1785423858243,"stop":1785423863918,"duration":5675},"status":"failed","severity":"normal"},{"uid":"86cc6bea4de1e302","name":"suppression d un produit du panier","time":{"start":1785423853296,"stop":1785423858242,"duration":4946},"status":"failed","severity":"normal"}]
+[{"uid":"4cff617f4d7778a0","name":"connexion avec des coordonnes valides","time":{"start":1785424107593,"stop":1785424111472,"duration":3879},"status":"passed","severity":"normal"}]
