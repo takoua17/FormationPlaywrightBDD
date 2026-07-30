@@ -1,0 +1,87 @@
+# robot qui s'execute apres chaque push sur Github sur la branche Main
+# a chaque push : il clone, installe node.js, playw, java, allure
+#il va creer le fichier .env ( secret). il va lancer les test et publie les rapports sur github page ( un lien disponible pour ouvrir les rapports)
+name: BDD Playwright Test
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions: # il va creer des rapports dans le githubpage (qui va etre generer automatiquement)
+  contents: write
+jobs:
+  test:
+    name: Run BDD Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Java (for Allure)
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Install Allure CLI
+        run: npm install -g allure-commandline
+
+      - name: Create directories #
+        run: |
+          mkdir -p rapports/videos
+          mkdir -p rapports/screenshots
+          mkdir -p allure-results
+        # ↑ Crée les dossiers nécessaires pour les vidéos et screenshots
+        #   Sans ça → hooks.ts échoue en essayant d'écrire dans un dossier inexistant
+
+      - name: Create .env file # lire les données a partir de .env
+        run: |
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
+          echo "USER_EMAIL=${{ secrets.USER_EMAIL }}" >> .env
+          echo "USER_PASSWORD=${{ secrets.USER_PASSWORD }}" >> .env
+          echo "HEADLESS=true" >> .env
+          echo "CARD_NAME=Test Automation" >> .env
+          echo "CARD_NUMBER=4111111111111111" >> .env
+          echo "CARD_CVC=123" >> .env
+          echo "CARD_EXPIRY_MONTH=12" >> .env
+          echo "CARD_EXPIRY_YEAR=2027" >> .env
+        # ↑ Crée le .env depuis les GitHub Secrets
+        #   HEADLESS=true → pas de navigateur visible en CI
+
+      - name: Run tests
+        run: npm test
+        continue-on-error: true
+        # ↑ continue-on-error: true → génère le rapport même si des tests échouent
+        env:
+          CI: true
+          # ↑ Variable standard CI — certaines librairies adaptent leur comportement
+
+      - name: Generate Allure Report
+        run: allure generate allure-results --clean -o allure-report
+        if: always()
+
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
